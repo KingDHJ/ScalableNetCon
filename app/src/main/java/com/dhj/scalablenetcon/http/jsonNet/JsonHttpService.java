@@ -22,59 +22,59 @@ import java.io.IOException;
  * Created by duanhuangjun on 17/2/27.
  */
 
-public class JsonHttpService implements IHttpService{
-    private static final String TAG = "KING_DHJ";
-    private byte[] requestData;
-    private IHttpListener iHttpListener;
-    private String url;
-    private HttpPost httpPost;
-    private HttpClient httpClient=new DefaultHttpClient();
-    private HttpResponseHandler httpResponseHandler = new HttpResponseHandler();
-    @Override
-    public void excute() {
-        /**
-         * 第一版只支持post请求,下一版添加(get请求方法,以及添加head);
-         * */
-        httpPost =  new HttpPost(url);
-        ByteArrayEntity entity = new ByteArrayEntity(requestData);
-        httpPost.setEntity(entity);
-        Log.i(TAG,requestData.toString());
-        try {
-            httpClient.execute(httpPost,httpResponseHandler);
-        } catch (IOException e) {
-            iHttpListener.onFail(Constants.Conn_Erro);
-        }
-    }
+public class JsonHttpService implements IHttpService {
+    private IHttpListener httpListener;
 
+    private HttpClient httpClient=new DefaultHttpClient();
+    private HttpPost httpPost;
+    private String url;
+
+    private byte[] requestDate;
+    /**
+     * httpClient获取网络的回调
+     */
+    private HttpRespnceHandler httpRespnceHandler=new HttpRespnceHandler();
     @Override
     public void setUrl(String url) {
-        this.url = url;
+        this.url=url;
     }
 
     @Override
-    public void setIHttpListener(IHttpListener iHttpListener) {
-        this.iHttpListener=iHttpListener;
+    public void excute() {
+        httpPost=new HttpPost(url);
+        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
+        httpPost.setEntity(byteArrayEntity);
+        try {
+            httpClient.execute(httpPost,httpRespnceHandler);
+        } catch (IOException e) {
+            httpListener.onFail();
+        }
+    }
+    @Override
+    public void setHttpListener(IHttpListener httpListener) {
+        this.httpListener=httpListener;
     }
 
     @Override
-    public void setRequest(byte[] request) {
-        this.requestData = request;
+    public void setRequestData(byte[] requestData) {
+        this.requestDate=requestData;
     }
-
-    /**
-     * HttpClient请求结果回调处理
-     * */
-    private class HttpResponseHandler extends BasicResponseHandler
+    private class HttpRespnceHandler extends BasicResponseHandler
     {
         @Override
         public String handleResponse(HttpResponse response) throws ClientProtocolException {
-            int statusCode = response.getStatusLine().getStatusCode();
-            Log.i("TAG",statusCode+"");
-            if(statusCode==200){
-                iHttpListener.onSuccess(response.getEntity());
-            }else {
-                iHttpListener.onFail(Constants.Conn_Erro);
+            //响应吗
+            int code=response.getStatusLine().getStatusCode();
+            Log.i("king",code+"////");
+            if(code==200)
+            {
+                httpListener.onSuccess(response.getEntity());
+            }else
+            {
+                httpListener.onFail();
             }
+
+
             return null;
         }
     }

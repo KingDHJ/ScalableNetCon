@@ -2,8 +2,10 @@ package com.dhj.scalablenetcon.http.jsonNet;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.dhj.scalablenetcon.http.constants.Constants;
 import com.dhj.scalablenetcon.http.interfaces.IDataListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
@@ -23,15 +25,15 @@ import java.io.InputStreamReader;
  * 策略模式
  * 支持json请求的策略,处理json请求的,请求数据处理类
  * */
-public class JsonDealListener<M> implements IHttpListener{
+public class JsonDealLitener<M> implements IHttpListener {
+    private Class<M> responese;
+    /**
+     * 回调调用层 的接口
+     */
+    private IDataListener<M> dataListener;
 
-    private Class<M> responese;   //调用层希望返回的请求结果对象
-
-    IDataListener<M> dataListener;   //框架层把数据返回给调用层的接口
-
-    Handler handler = new Handler(Looper.getMainLooper());
-
-    public JsonDealListener(Class<M> responese, IDataListener<M> dataListener) {
+    Handler handler=new Handler(Looper.getMainLooper());
+    public JsonDealLitener(Class<M> responese, IDataListener<M> dataListener) {
         this.responese = responese;
         this.dataListener = dataListener;
     }
@@ -40,22 +42,30 @@ public class JsonDealListener<M> implements IHttpListener{
     public void onSuccess(HttpEntity httpEntity) {
         InputStream inputStream=null;
         try {
-            inputStream = httpEntity.getContent();
-            String content = getContent(inputStream);
-            //使用fastJson把数据解析成应用层希望的获取数据
-            final M m =JSON.parseObject(content,responese);
+            inputStream=httpEntity.getContent();
             /*
-            * 以上的所有操作都是在子线程中,需要把数据发到主线程,给应用层使用
-            * */
+            得到网络返回的数据
+            子线程
+             */
+            String content=getContent(inputStream);
+            final M m= JSON.parseObject(content,responese);
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     dataListener.onSuccess(m);
                 }
             });
+
         } catch (IOException e) {
-            dataListener.onFail(Constants.Analysy_Data);
+            dataListener.onFail();
         }
+
+    }
+
+    @Override
+    public void onFail() {
+        dataListener.onFail();
     }
 
     private String getContent(InputStream inputStream) {
@@ -76,7 +86,7 @@ public class JsonDealListener<M> implements IHttpListener{
                 }
 
             } catch (IOException e) {
-                dataListener.onFail(Constants.Analysy_Data);
+                dataListener.onFail();
                 System.out.println("Error=" + e.toString());
 
             } finally {
@@ -96,14 +106,8 @@ public class JsonDealListener<M> implements IHttpListener{
 
         } catch (Exception e) {
             e.printStackTrace();
-            dataListener.onFail(Constants.Analysy_Data);
+            dataListener.onFail();
         }
         return content;
-    }
-
-
-    @Override
-    public void onFail(int code) {
-        dataListener.onFail(code);
     }
 }

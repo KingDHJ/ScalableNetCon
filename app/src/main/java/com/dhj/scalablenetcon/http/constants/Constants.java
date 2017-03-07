@@ -9,4 +9,5 @@ public class Constants {
     public static final int Analysy_Data = 1;
     //网络连接出错
     public static final int Conn_Erro = 2;
+
 }

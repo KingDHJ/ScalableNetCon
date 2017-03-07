@@ -9,12 +9,11 @@ package com.dhj.scalablenetcon.http.interfaces;
  * */
 public interface IDataListener<M> {
     /**
-     * IHttpListener处理数据完成后得到调用层所需要的数据,通过该接口返回给调用层
-     * */
+     * 回调结果给调用层
+     * @param m
+     */
     void onSuccess(M m);
 
-    /**
-     * 给调用层返回请求框架层请求失败的情况
-     * */
-    void onFail(int code);
+
+    void onFail();
 }

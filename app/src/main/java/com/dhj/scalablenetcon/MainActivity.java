@@ -12,7 +12,8 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "KING_DHJ";
-    private String url = "https://api.aopayun.com/aopa_api/servlet/api.htm/getAdvertListByClassService";
+    private String APPKEY = "050ad705f666f1f0084f779d585402c8";
+    private String url = "http://v.juhe.cn/toutiao/index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void login() {
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put("classTypes", "3001");
+        map.put("type", "top");
+        map.put("key", APPKEY);
         ScalableCon.sendRequest(map, url, ElvesModel.class, new IDataListener<ElvesModel>() {
 
             @Override
@@ -37,9 +39,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFail(int code) {
+            public void onFail() {
 
             }
+
         });
     }
 

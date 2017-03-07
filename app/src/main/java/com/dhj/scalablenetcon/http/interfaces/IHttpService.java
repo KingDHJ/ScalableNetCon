@@ -9,22 +9,28 @@ package com.dhj.scalablenetcon.http.interfaces;
  * */
 public interface IHttpService {
     /**
-     * 执行网络操作
+     * 设置url
+     * @param url
+     */
+    void setUrl(String url);
+
+    /**
+     * 执行获取网络
      */
     void excute();
 
     /**
-     * 设置url
-     * */
-    void setUrl(String url);
-
-    /**
-     * 设置数据处理接口
-     * */
-    void setIHttpListener(IHttpListener iHttpListener);
+     * 设置处理接口
+     * @param httpListener
+     */
+    void setHttpListener(IHttpListener httpListener);
 
     /**
      * 设置请求参数
-     * */
-    void setRequest(byte[] request);
+     * String  1
+     * byte[]  2
+     *
+     */
+    void setRequestData(byte[] requestData);
+
 }

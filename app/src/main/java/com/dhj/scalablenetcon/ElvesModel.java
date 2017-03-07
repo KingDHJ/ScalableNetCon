@@ -7,124 +7,101 @@ import java.util.List;
  */
 
 public class ElvesModel {
-        private int code;
-        private List<Modle> modleList;
-        private String message;
 
-    public int getCode() {
-        return code;
+    private List<NewsBean> data;
+
+    public List<NewsBean> getData() {
+        return data;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setData(List<NewsBean> data) {
+        this.data = data;
     }
 
-    public List<Modle> getModleList() {
-        return modleList;
+    private class NewsBean{
+
+        private String uniquekey;
+        private String title;
+        private String date;
+        private String category;
+        private String author_name;
+        private String url;
+        private String thumbnail_pic_s;
+        private String thumbnail_pic_s02;
+        private String thumbnail_pic_s03;
+
+        public String getUniquekey() {
+            return uniquekey;
+        }
+
+        public void setUniquekey(String uniquekey) {
+            this.uniquekey = uniquekey;
+        }
+
+        public String getThumbnail_pic_s03() {
+            return thumbnail_pic_s03;
+        }
+
+        public void setThumbnail_pic_s03(String thumbnail_pic_s03) {
+            this.thumbnail_pic_s03 = thumbnail_pic_s03;
+        }
+
+        public String getThumbnail_pic_s02() {
+            return thumbnail_pic_s02;
+        }
+
+        public void setThumbnail_pic_s02(String thumbnail_pic_s02) {
+            this.thumbnail_pic_s02 = thumbnail_pic_s02;
+        }
+
+        public String getThumbnail_pic_s() {
+            return thumbnail_pic_s;
+        }
+
+        public void setThumbnail_pic_s(String thumbnail_pic_s) {
+            this.thumbnail_pic_s = thumbnail_pic_s;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public String getAuthor_name() {
+            return author_name;
+        }
+
+        public void setAuthor_name(String author_name) {
+            this.author_name = author_name;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
     }
 
-    public void setModleList(List<Modle> modleList) {
-        this.modleList = modleList;
-    }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public class Modle{
-            private String title;
-            private String kinds;
-            private String ids;
-            private String summary;
-            private String advertPic;
-            private String advertId;
-            private String advertClass;
-            private String time;
-            private String url;
-            private String state;
-
-            public String getTitle() {
-                return title;
-            }
-
-            public void setTitle(String title) {
-                this.title = title;
-            }
-
-            public String getState() {
-                return state;
-            }
-
-            public void setState(String state) {
-                this.state = state;
-            }
-
-            public String getKinds() {
-                return kinds;
-            }
-
-            public void setKinds(String kinds) {
-                this.kinds = kinds;
-            }
-
-            public String getIds() {
-                return ids;
-            }
-
-            public void setIds(String ids) {
-                this.ids = ids;
-            }
-
-            public String getSummary() {
-                return summary;
-            }
-
-            public void setSummary(String summary) {
-                this.summary = summary;
-            }
-
-            public String getAdvertPic() {
-                return advertPic;
-            }
-
-            public void setAdvertPic(String advertPic) {
-                this.advertPic = advertPic;
-            }
-
-            public String getAdvertId() {
-                return advertId;
-            }
-
-            public void setAdvertId(String advertId) {
-                this.advertId = advertId;
-            }
-
-            public String getAdvertClass() {
-                return advertClass;
-            }
-
-            public void setAdvertClass(String advertClass) {
-                this.advertClass = advertClass;
-            }
-
-            public String getTime() {
-                return time;
-            }
-
-            public void setTime(String time) {
-                this.time = time;
-            }
-
-            public String getUrl() {
-                return url;
-            }
-
-            public void setUrl(String url) {
-                this.url = url;
-            }
-    }
 }

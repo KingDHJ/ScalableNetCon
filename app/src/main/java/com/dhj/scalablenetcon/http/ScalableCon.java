@@ -7,7 +7,9 @@ package com.dhj.scalablenetcon.http;
 import android.util.Log;
 
 import com.dhj.scalablenetcon.http.interfaces.IDataListener;
-import com.dhj.scalablenetcon.http.jsonNet.JsonDealListener;
+import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
+import com.dhj.scalablenetcon.http.interfaces.IHttpService;
+import com.dhj.scalablenetcon.http.jsonNet.JsonDealLitener;
 import com.dhj.scalablenetcon.http.jsonNet.JsonHttpService;
 
 import java.util.concurrent.FutureTask;
@@ -24,21 +26,20 @@ public class ScalableCon {
      * M  应用层传入的希望返回的结果对象
      *
      * */
-    public static <T,M> void sendRequest(T requestInfo, String url , Class<M> reseponseClass, IDataListener<M> iDataListener){
-        JsonDealListener mJsonDealListener = new JsonDealListener<>(reseponseClass, iDataListener);
-        JsonHttpService mJsonHttpService = new JsonHttpService();
-        //构建创建一个任务所需要的参数,requestHold
-        RequseHold<T> mRequseHold = new RequseHold<>();
-        mRequseHold.setiHttpListener(mJsonDealListener);
-        mRequseHold.setiHttpService(mJsonHttpService);
-        mRequseHold.setUrl(url);
-        HttpTask<T> tHttpTask = new HttpTask<>(mRequseHold);
-        //把任务交给线程池去执行
+    public static <T,M> void sendRequest(T  requestInfo, String url,
+                                         Class<M> response, IDataListener dataListener)
+    {
+        RequestHodler<T> requestHodler=new RequestHodler<>();
+        requestHodler.setUrl(url);
+        IHttpService httpService=new JsonHttpService();
+        IHttpListener httpListener=new JsonDealLitener<>(response,dataListener);
+        requestHodler.setHttpService(httpService);
+        requestHodler.setHttpListener(httpListener);
+        HttpTask<T> httpTask=new HttpTask<>(requestHodler);
         try {
-            ThreadPoolManager.getInstance().excute(new FutureTask<Object>(tHttpTask,null));
+            ThreadPoolManager.getInstance().execte(new FutureTask<Object>(httpTask,null));
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            Log.i(TAG,e.toString());
+            dataListener.onFail();
         }
     }
 }
