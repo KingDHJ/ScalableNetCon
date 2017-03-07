@@ -1,0 +1,4 @@
+# ScalableNetCon
+比Volley更好用的网络请求框架,具有高扩展性,支持json文本请求,大文件断点下载,图片下载,音频下载、批量下载等
+1、整个框架的思路
+把整个网络请求框架分成4个主要部分，IHttpService负责核心的网络请求，IHttpListener负责请求回调得到的Response的数据解析成应用层需要的返回结果，IDataListener负责把框架层解析好的数据返回给应用层
