@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 
 /**
- * Created by Administrator on 2017/1/9 0009.
+ * Created by duanhuangjun on 17/3/9.
  */
 
 public class BaseDaoFactory {

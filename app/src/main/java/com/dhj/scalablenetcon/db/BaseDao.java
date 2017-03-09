@@ -6,8 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.administrator.volleydongnao.db.annotion.DbFiled;
-import com.example.administrator.volleydongnao.db.annotion.DbTable;
+
+import com.dhj.scalablenetcon.db.annotion.DbFiled;
+import com.dhj.scalablenetcon.db.annotion.DbTable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 /**
- * Created by Administrator on 2017/1/12.
+ * Created by duanhuangjun on 17/3/9.
  */
+
 
 public abstract class BaseDao<T> implements IBaseDao<T> {
     private boolean isInit = false;

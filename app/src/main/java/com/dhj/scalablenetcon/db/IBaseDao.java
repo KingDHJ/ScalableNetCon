@@ -3,8 +3,9 @@ package com.dhj.scalablenetcon.db;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/1/9 0009.
+ * Created by duanhuangjun on 17/3/9.
  */
+
 
 public interface IBaseDao<T> {
     /**
