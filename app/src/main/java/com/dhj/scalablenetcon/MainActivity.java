@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.dhj.scalablenetcon.http.ScalableCon;
+import com.dhj.scalablenetcon.http.fileNet.DownFileManager;
 import com.dhj.scalablenetcon.http.interfaces.IDataListener;
 
 import java.util.HashMap;
@@ -25,8 +26,27 @@ public class MainActivity extends AppCompatActivity {
                 login();
             }
         });
+
+        findViewById(R.id.bnt1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downFile();
+            }
+        });
+
     }
 
+    /**
+     * 测试下载文件
+     * */
+    private void downFile() {
+        DownFileManager downFileService=new DownFileManager();
+        downFileService.down("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk");
+    }
+
+    /**
+     * 测试请求json文本
+     * */
     private void login() {
         HashMap<String, String> map = new HashMap<String, String>();
         map.put("type", "top");

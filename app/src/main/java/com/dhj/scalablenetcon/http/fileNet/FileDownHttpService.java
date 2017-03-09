@@ -1,56 +1,57 @@
-package com.dhj.scalablenetcon.http.jsonNet;
+package com.dhj.scalablenetcon.http.fileNet;
 
 import android.util.Log;
 
-import com.dhj.scalablenetcon.http.constants.Constants;
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by duanhuangjun on 17/2/27.
+ * Created by duanhuangjun on 17/3/9.
  */
 
-public class JsonHttpService implements IHttpService {
+public class FileDownHttpService implements IHttpService{
+    private static final String TAG = "king_dhj";
+    /**
+     * 即将添加到请求头的信息,使用线程安全的集合
+     */
+    private Map<String ,String> headerMap= Collections.synchronizedMap(new HashMap<String ,String>());
+    /**
+     * 含有请求处理的 接口
+     */
     private IHttpListener httpListener;
 
+    private HttpGet httpPost;
     private HttpClient httpClient=new DefaultHttpClient();
-    private HttpPost httpPost;
     private String url;
-
-    private byte[] requestDate;
     /**
      * httpClient获取网络的回调
      */
-    private HttpRespnceHandler httpRespnceHandler=new HttpRespnceHandler();
+    private  HttpRespnceHandler httpRespnceHandler=new HttpRespnceHandler();
+
+    private byte[] requestDate;
+
     @Override
     public void setUrl(String url) {
         this.url=url;
     }
 
-    @Override
-    public void excute() {
-        httpPost=new HttpPost(url);
-        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
-        httpPost.setEntity(byteArrayEntity);
-        try {
-            httpClient.execute(httpPost,httpRespnceHandler);
-        } catch (IOException e) {
-            httpListener.onFail();
-        }
+    public Map<String, String> getHeaderMap() {
+        return headerMap;
     }
+
     @Override
     public void setHttpListener(IHttpListener httpListener) {
         this.httpListener=httpListener;
@@ -59,6 +60,33 @@ public class JsonHttpService implements IHttpService {
     @Override
     public void setRequestData(byte[] requestData) {
         this.requestDate=requestData;
+    }
+
+    @Override
+    public void excute() {
+        httpPost =new HttpGet(url);
+        constrcutHeader();
+//        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
+//        httpPost.setEntity(byteArrayEntity);
+        try {
+            httpClient.execute(httpPost,httpRespnceHandler);
+        } catch (IOException e) {
+            httpListener.onFail();
+        }
+    }
+
+    /**
+     * 把map集合放入到底层请求的的head中
+     * */
+    private void constrcutHeader() {
+        Iterator iterator=headerMap.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            String key= (String) iterator.next();
+            String value=headerMap.get(key);
+            Log.i(TAG," 请求头信息  "+key+"  value "+value);
+            httpPost.addHeader(key,value);
+        }
     }
 
     @Override
@@ -86,13 +114,14 @@ public class JsonHttpService implements IHttpService {
 
     }
 
+
+
     private class HttpRespnceHandler extends BasicResponseHandler
     {
         @Override
         public String handleResponse(HttpResponse response) throws ClientProtocolException {
             //响应吗
             int code=response.getStatusLine().getStatusCode();
-            Log.i("king",code+"////");
             if(code==200)
             {
                 httpListener.onSuccess(response.getEntity());
@@ -105,4 +134,5 @@ public class JsonHttpService implements IHttpService {
             return null;
         }
     }
+
 }

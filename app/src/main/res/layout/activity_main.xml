@@ -14,7 +14,14 @@
         android:id="@+id/bnt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="测试请求框架"
-        android:layout_centerInParent="true"
+        android:text="测试JSON文本请求框架"
         />
+    <Button
+        android:id="@+id/bnt1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试大文件下载框架"
+        android:layout_marginTop="50dp"
+        />
+
 </RelativeLayout>

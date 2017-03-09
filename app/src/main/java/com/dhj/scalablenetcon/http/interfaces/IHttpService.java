@@ -4,6 +4,8 @@ package com.dhj.scalablenetcon.http.interfaces;
  * Created by duanhuangjun on 17/2/27.
  */
 
+import java.util.Map;
+
 /**
  * 负责处理网络请求的操作
  * */
@@ -33,4 +35,16 @@ public interface IHttpService {
      */
     void setRequestData(byte[] requestData);
 
+    /**
+     * 文件下载额外添加的方法
+     * */
+    Map<String,String> getHttpHeadMap();
+
+    boolean cancle();
+
+    boolean isCancle();
+
+    boolean isPause();
+
+    void pause();
 }
