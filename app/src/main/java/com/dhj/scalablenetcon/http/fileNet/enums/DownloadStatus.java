@@ -1,13 +1,10 @@
 package com.dhj.scalablenetcon.http.fileNet.enums;
 
 /**
- * Created by duanhuangjun on 17/3/9.
+ * Created by duanhuangjun on 17/2/27.
  */
 
-/**
- * 用枚举表示下载的状态
- * */
-public enum DownloadStatus {
+public enum  DownloadStatus {
     waitting(0),
 
     starting(1),
@@ -22,7 +19,7 @@ public enum DownloadStatus {
     ;
 
     private int value;
-    private DownloadStatus(int value)
+    private   DownloadStatus(int value)
     {
         this.value=value;
     }

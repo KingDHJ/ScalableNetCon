@@ -3,11 +3,11 @@ package com.dhj.scalablenetcon.http.fileNet;
 import android.os.Handler;
 import android.os.Looper;
 
+
 import com.dhj.scalablenetcon.http.fileNet.bean.DownloadItemInfo;
 import com.dhj.scalablenetcon.http.fileNet.enums.DownloadStatus;
 import com.dhj.scalablenetcon.http.fileNet.interfaces.IDownLitener;
 import com.dhj.scalablenetcon.http.fileNet.interfaces.IDownloadServiceCallable;
-import com.dhj.scalablenetcon.http.interfaces.IDataListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
 import org.apache.http.HttpEntity;
@@ -18,29 +18,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
 /**
- * Created by duanhuangjun on 17/3/9.
+ * Created by duanhuangjun on 17/2/27.
  */
 
-/**
- * 下载有关成功后,对http Response的数据进行处理
- * */
-public class DownLoadLitener implements IDownLitener{
+public class DownLoadLitener  implements IDownLitener {
 
-    //下载有关信息的封装
-    private  DownloadItemInfo downloadItemInfo;
+    private DownloadItemInfo downloadItemInfo;
+
     private File file;
     protected  String url;
-    //已经下载的长度
     private long breakPoint;
-    //给应用层的回调
     private IDownloadServiceCallable downloadServiceCallable;
-    //具体做下载
+
     private IHttpService httpService;
-
+    /**
+     * 得到主线程
+     */
     private Handler handler=new Handler(Looper.getMainLooper());
-
     public DownLoadLitener(DownloadItemInfo downloadItemInfo,
                            IDownloadServiceCallable downloadServiceCallable,
                            IHttpService httpService) {
@@ -54,11 +49,31 @@ public class DownLoadLitener implements IDownLitener{
         this.breakPoint=file.length();
     }
 
+    /**
+     * 2
+     * @param headerMap
+     */
+    public void addHttpHeader(Map<String,String> headerMap)
+    {
+        long length=getFile().length();
+        if(length>0L)
+        {
+            headerMap.put("RANGE","bytes="+length+"-");
+        }
+
+    }
+    public DownLoadLitener(DownloadItemInfo downloadItemInfo) {
+        this.downloadItemInfo = downloadItemInfo;
+    }
+
     @Override
     public void setHttpServive(IHttpService httpServive) {
         this.httpService=httpServive;
     }
 
+    /**
+     * 设置取消接口
+     */
     @Override
     public void setCancleCalle() {
 
@@ -69,9 +84,6 @@ public class DownLoadLitener implements IDownLitener{
 
     }
 
-    /**
-     * 请求成功后,IHttpLitener处理下载的数据,
-     * */
     @Override
     public void onSuccess(HttpEntity httpEntity) {
         InputStream inputStream = null;
@@ -97,7 +109,6 @@ public class DownLoadLitener implements IDownLitener{
         long calcSpeedLen = 0L;
         //总数
         long totalLength = this.breakPoint + dataLength;
-
         //更新数量
         this.receviceTotalLength(totalLength);
         //更新状态
@@ -125,7 +136,6 @@ public class DownLoadLitener implements IDownLitener{
                         downloadServiceCallable.onDownloadError(downloadItemInfo, 2, "用户暂停了");
                         return;
                     }
-
                     bos.write(buffer, 0, length);
                     getLen += (long) length;
                     receiveLen += (long) length;
@@ -139,6 +149,7 @@ public class DownLoadLitener implements IDownLitener{
                         count = 0;
                         calcSpeedLen = 0L;
                         receiveLen = 0L;
+                        //应该保存数据库
                         this.downloadLengthChange(this.breakPoint + getLen, totalLength, speed);
                     }
                 }
@@ -173,8 +184,62 @@ public class DownLoadLitener implements IDownLitener{
                 e.printStackTrace();
             }
         }
+
+
     }
 
+    /**
+     * 创建文件夹的操作
+     * @param parentFile
+     * @return
+     */
+    private boolean makeDir(File parentFile) {
+        return parentFile.exists()&&!parentFile.isFile()
+                ?parentFile.exists()&&parentFile.isDirectory():
+                parentFile.mkdirs();
+    }
+
+
+    private void downloadLengthChange(final long downlength, final long totalLength, final long speed) {
+
+        downloadItemInfo.setCurrentLength(downlength);
+        if(downloadServiceCallable!=null)
+        {
+            DownloadItemInfo copyDownItenIfo=downloadItemInfo.copy();
+            synchronized (this.downloadServiceCallable)
+            {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadServiceCallable.onCurrentSizeChanged(downloadItemInfo,(double) downlength/(double)totalLength,speed);
+                    }
+                });
+            }
+
+        }
+
+    }
+
+    /**
+     * 更改下载时的状态
+     * @param downloading
+     */
+    private void downloadStatusChange(DownloadStatus downloading) {
+        downloadItemInfo.setStatus(downloading.getValue());
+        final DownloadItemInfo copyDownloadItemInfo=downloadItemInfo.copy();
+        if(downloadServiceCallable!=null)
+        {
+            synchronized (this.downloadServiceCallable)
+            {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadServiceCallable.onDownloadStatusChanged(copyDownloadItemInfo);
+                    }
+                });
+            }
+        }
+    }
 
     /**
      * 回调  长度的变化
@@ -198,84 +263,16 @@ public class DownLoadLitener implements IDownLitener{
 
     }
 
-    /**
-     * 回调下载进度的改变
-     * */
-    private void downloadLengthChange(final long downlength, final long totalLength, final long speed) {
-
-        downloadItemInfo.setCurrentLength(downlength);
-        if(downloadServiceCallable!=null)
-        {
-            DownloadItemInfo copyDownItenIfo=downloadItemInfo.copy();
-            synchronized (this.downloadServiceCallable)
-            {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadServiceCallable.onCurrentSizeChanged(downloadItemInfo,downlength/totalLength,speed);
-                    }
-                });
-            }
-        }
-    }
-
-
-    /**
-     * 更改下载时的状态
-     * @param downloading
-     */
-    private void downloadStatusChange(DownloadStatus downloading) {
-        downloadItemInfo.setStatus(downloading);
-        final DownloadItemInfo copyDownloadItemInfo=downloadItemInfo.copy();
-        if(downloadServiceCallable!=null)
-        {
-            synchronized (this.downloadServiceCallable)
-            {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadServiceCallable.onDownloadStatusChanged(copyDownloadItemInfo);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
-     * 创建文件夹的操作
-     * @param parentFile
-     * @return
-     */
-    private boolean makeDir(File parentFile) {
-        return parentFile.exists()&&!parentFile.isFile()
-                ?parentFile.exists()&&parentFile.isDirectory():
-                parentFile.mkdirs();
-    }
-
-
-    public File getFile() {
-        return file;
-    }
-
-
-    public IHttpService getHttpService() {
-        return httpService;
-    }
-
-
-
     @Override
     public void onFail() {
 
     }
 
-    @Override
-    public void addHttpHeader(Map<String, String> headerMap) {
-        long length=getFile().length();
-        if(length>0L)
-        {
-            headerMap.put("RANGE","bytes="+length+"-");
-        }
+    public IHttpService getHttpService() {
+        return httpService;
     }
 
+    public File getFile() {
+        return file;
+    }
 }

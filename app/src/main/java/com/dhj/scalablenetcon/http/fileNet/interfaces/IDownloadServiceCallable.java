@@ -1,16 +1,11 @@
 package com.dhj.scalablenetcon.http.fileNet.interfaces;
 
-/**
- * Created by duanhuangjun on 17/3/9.
- */
 
 import com.dhj.scalablenetcon.http.fileNet.bean.DownloadItemInfo;
-
 /**
- * 通过接口的方式,把下载的情况返回给应用层
- * */
+ * Created by duanhuangjun on 17/2/27.
+ */
 public interface IDownloadServiceCallable {
-
     void onDownloadStatusChanged(DownloadItemInfo downloadItemInfo);
 
     void onTotalLengthReceived(DownloadItemInfo downloadItemInfo);

@@ -8,10 +8,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
- * Created by duanhuangjun on 17/3/9.
+ * Created by duanhuangjun on 17/2/27.
  */
-
-public class BaseEntity<T> implements Serializable {
+public class BaseEntity<T> implements Serializable{
     private static final long serialVersionUID = 1L;
     public BaseEntity() {
     }
@@ -58,4 +57,3 @@ public class BaseEntity<T> implements Serializable {
 
 
 }
-

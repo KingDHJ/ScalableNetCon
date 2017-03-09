@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -8,20 +8,48 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.dhj.scalablenetcon.MainActivity">
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/bnt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试JSON文本请求框架"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="登录用户"
+        android:onClick="login"
         />
     <Button
-        android:id="@+id/bnt1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试大文件下载框架"
-        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="插入用户照片数据"
+        android:onClick="insert"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="写入版本信息"
+        android:onClick="write"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="升级"
+        android:onClick="update"
         />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/bnt6"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="大文件断点下载"
+        android:onClick="update"
+        />
+</LinearLayout>

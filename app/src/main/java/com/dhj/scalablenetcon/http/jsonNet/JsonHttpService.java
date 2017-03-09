@@ -1,24 +1,19 @@
 package com.dhj.scalablenetcon.http.jsonNet;
 
-import android.util.Log;
 
-import com.dhj.scalablenetcon.http.constants.Constants;
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.IOException;
 import java.util.Map;
-
 /**
  * Created by duanhuangjun on 17/2/27.
  */
@@ -30,7 +25,7 @@ public class JsonHttpService implements IHttpService {
     private HttpPost httpPost;
     private String url;
 
-    private byte[] requestDate;
+    private byte[] requestData;
     /**
      * httpClient获取网络的回调
      */
@@ -43,14 +38,19 @@ public class JsonHttpService implements IHttpService {
     @Override
     public void excute() {
         httpPost=new HttpPost(url);
-        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
-        httpPost.setEntity(byteArrayEntity);
+        if(requestData!=null&&requestData.length>0)
+        {
+            ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestData);
+            httpPost.setEntity(byteArrayEntity);
+        }
+
         try {
             httpClient.execute(httpPost,httpRespnceHandler);
         } catch (IOException e) {
             httpListener.onFail();
         }
     }
+
     @Override
     public void setHttpListener(IHttpListener httpListener) {
         this.httpListener=httpListener;
@@ -58,7 +58,12 @@ public class JsonHttpService implements IHttpService {
 
     @Override
     public void setRequestData(byte[] requestData) {
-        this.requestDate=requestData;
+         this.requestData=requestData;
+    }
+
+    @Override
+    public void pause() {
+
     }
 
     @Override
@@ -81,18 +86,12 @@ public class JsonHttpService implements IHttpService {
         return false;
     }
 
-    @Override
-    public void pause() {
-
-    }
-
     private class HttpRespnceHandler extends BasicResponseHandler
     {
         @Override
         public String handleResponse(HttpResponse response) throws ClientProtocolException {
             //响应吗
             int code=response.getStatusLine().getStatusCode();
-            Log.i("king",code+"////");
             if(code==200)
             {
                 httpListener.onSuccess(response.getEntity());

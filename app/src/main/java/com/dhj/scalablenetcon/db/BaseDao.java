@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-/**
- * Created by duanhuangjun on 17/3/9.
- */
 
+/**
+ * Created by Administrator on 2017/1/12.
+ */
 
 public abstract class BaseDao<T> implements IBaseDao<T> {
     private boolean isInit = false;

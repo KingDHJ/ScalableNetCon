@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 线程池的管理类,负责处理线程的执行,多线程的缓存队列存放待执行的线程
  * */
 public class ThreadPoolManager {
-    private static final String TAG ="dongnao" ;
+    private static final String TAG ="KING_DHJ" ;
     private static  ThreadPoolManager instance=new ThreadPoolManager();
 
     private LinkedBlockingQueue<Future<?>> taskQuene=new LinkedBlockingQueue<>();
@@ -78,4 +78,22 @@ public class ThreadPoolManager {
             }
         }
     };
+
+
+    public <T> boolean removeTask(FutureTask futureTask)
+    {
+        boolean result=false;
+        /**
+         * 阻塞式队列是否含有线程
+         */
+        if(taskQuene.contains(futureTask))
+        {
+            taskQuene.remove(futureTask);
+        }else
+        {
+            result=threadPoolExecutor.remove(futureTask);
+        }
+        return  result;
+    }
+
 }

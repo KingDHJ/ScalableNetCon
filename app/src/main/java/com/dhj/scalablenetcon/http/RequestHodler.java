@@ -1,15 +1,13 @@
 package com.dhj.scalablenetcon.http;
 
-/**
- * Created by duanhuangjun on 17/2/27.
- */
 
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
 /**
- * 请求任务所需要的参数的封装
- * */
+ * Created by duanhuangjun on 17/2/27.
+ */
+
 public class RequestHodler<T> {
     /**
      * 执行下载类

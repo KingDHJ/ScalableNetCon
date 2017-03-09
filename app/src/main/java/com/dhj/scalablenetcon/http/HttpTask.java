@@ -1,22 +1,18 @@
 package com.dhj.scalablenetcon.http;
 
-/**
- * Created by duanhuangjun on 17/2/27.
- */
-
-import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
-import java.io.UnsupportedEncodingException;
+import java.util.concurrent.FutureTask;
 
 /**
- *一次请求的封装,交给线程池去处理,每做一次网络请求,就去创建一个请求的封装对象,再交给线程池去处理
- * */
+ * Created by duanhuangjun on 17/2/27.
+ */
+
 public class HttpTask<T> implements Runnable {
     private IHttpService httpService;
+    private FutureTask futureTask;
     public HttpTask(RequestHodler<T> requestHodler)
     {
         httpService=requestHodler.getHttpService();
@@ -25,7 +21,6 @@ public class HttpTask<T> implements Runnable {
         //增加方法
         IHttpListener httpListener=requestHodler.getHttpListener();
         httpListener.addHttpHeader(httpService.getHttpHeadMap());
-
         try {
             T request=requestHodler.getRequestInfo();
             if(request!=null)
@@ -43,5 +38,31 @@ public class HttpTask<T> implements Runnable {
     @Override
     public void run() {
         httpService.excute();
+    }
+    /**
+     * 新增方法
+     */
+    public void start()
+    {
+        futureTask=new FutureTask(this,null);
+        try {
+            ThreadPoolManager.getInstance().execte(futureTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 新增方法
+     */
+    public  void pause()
+    {
+        httpService.pause();
+        if(futureTask!=null)
+        {
+            ThreadPoolManager.getInstance().removeTask(futureTask);
+        }
+
     }
 }

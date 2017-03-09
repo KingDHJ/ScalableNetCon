@@ -13,7 +13,9 @@ import com.dhj.scalablenetcon.http.jsonNet.JsonDealLitener;
 import com.dhj.scalablenetcon.http.jsonNet.JsonHttpService;
 
 import java.util.concurrent.FutureTask;
-
+/**
+ * Created by duanhuangjun on 17/2/27.
+ */
 /**
  * 应用层调用网络请求框架层的入口
  * */
@@ -22,10 +24,11 @@ public class ScalableCon {
     private static final String TAG = "KING_DHJ";
 
     /**
-     * T  应用层的请求参数对象
-     * M  应用层传入的希望返回的结果对象
      *
-     * */
+     * @param <T>  请求参数类型
+     * @param <M>  响应参数类型
+     *           暴露给调用层
+     */
     public static <T,M> void sendRequest(T  requestInfo, String url,
                                          Class<M> response, IDataListener dataListener)
     {
@@ -35,11 +38,14 @@ public class ScalableCon {
         IHttpListener httpListener=new JsonDealLitener<>(response,dataListener);
         requestHodler.setHttpService(httpService);
         requestHodler.setHttpListener(httpListener);
+        //将请求参数赋值
+        requestHodler.setRequestInfo(requestInfo);
+
         HttpTask<T> httpTask=new HttpTask<>(requestHodler);
         try {
             ThreadPoolManager.getInstance().execte(new FutureTask<Object>(httpTask,null));
         } catch (InterruptedException e) {
-            dataListener.onFail();
+            dataListener.onErro();
         }
     }
 }

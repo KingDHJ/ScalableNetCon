@@ -1,6 +1,8 @@
 package com.dhj.scalablenetcon.http.fileNet;
 
 import android.util.Log;
+import android.widget.ListView;
+
 
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
@@ -17,15 +19,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by duanhuangjun on 17/3/9.
+ * Created by duanhuangjun on 17/2/27.
  */
 
-public class FileDownHttpService implements IHttpService{
+public class FileDownHttpService implements IHttpService {
     private static final String TAG = "king_dhj";
     /**
-     * 即将添加到请求头的信息,使用线程安全的集合
+     * 即将添加到请求头的信息
      */
     private Map<String ,String> headerMap= Collections.synchronizedMap(new HashMap<String ,String>());
     /**
@@ -33,19 +36,50 @@ public class FileDownHttpService implements IHttpService{
      */
     private IHttpListener httpListener;
 
-    private HttpGet httpPost;
     private HttpClient httpClient=new DefaultHttpClient();
+    private HttpGet httpPost;
     private String url;
+
+    private byte[] requestDate;
     /**
      * httpClient获取网络的回调
      */
     private  HttpRespnceHandler httpRespnceHandler=new HttpRespnceHandler();
-
-    private byte[] requestDate;
+    /**
+     * 增加方法
+     */
+    private AtomicBoolean pause=new AtomicBoolean(false);
 
     @Override
     public void setUrl(String url) {
         this.url=url;
+    }
+
+    @Override
+    public void excute() {
+        httpPost=new HttpGet(url);
+        constrcutHeader();
+//        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
+//        httpPost.setEntity(byteArrayEntity);
+        try {
+            httpClient.execute(httpPost,httpRespnceHandler);
+        } catch (IOException e) {
+            httpListener.onFail();
+        }
+    }
+
+    /**
+     * 1
+     */
+    private void constrcutHeader() {
+        Iterator iterator=headerMap.keySet().iterator();
+        while (iterator.hasNext())
+        {
+            String key= (String) iterator.next();
+            String value=headerMap.get(key);
+            Log.i(TAG," 请求头信息  "+key+"  value "+value);
+            httpPost.addHeader(key,value);
+        }
     }
 
     public Map<String, String> getHeaderMap() {
@@ -63,30 +97,8 @@ public class FileDownHttpService implements IHttpService{
     }
 
     @Override
-    public void excute() {
-        httpPost =new HttpGet(url);
-        constrcutHeader();
-//        ByteArrayEntity byteArrayEntity=new ByteArrayEntity(requestDate);
-//        httpPost.setEntity(byteArrayEntity);
-        try {
-            httpClient.execute(httpPost,httpRespnceHandler);
-        } catch (IOException e) {
-            httpListener.onFail();
-        }
-    }
-
-    /**
-     * 把map集合放入到底层请求的的head中
-     * */
-    private void constrcutHeader() {
-        Iterator iterator=headerMap.keySet().iterator();
-        while (iterator.hasNext())
-        {
-            String key= (String) iterator.next();
-            String value=headerMap.get(key);
-            Log.i(TAG," 请求头信息  "+key+"  value "+value);
-            httpPost.addHeader(key,value);
-        }
+    public void pause() {
+        pause.compareAndSet(false,true);
     }
 
     @Override
@@ -103,18 +115,10 @@ public class FileDownHttpService implements IHttpService{
     public boolean isCancle() {
         return false;
     }
-
     @Override
     public boolean isPause() {
-        return false;
+        return pause.get();
     }
-
-    @Override
-    public void pause() {
-
-    }
-
-
 
     private class HttpRespnceHandler extends BasicResponseHandler
     {
@@ -122,11 +126,12 @@ public class FileDownHttpService implements IHttpService{
         public String handleResponse(HttpResponse response) throws ClientProtocolException {
             //响应吗
             int code=response.getStatusLine().getStatusCode();
-            if(code==200 || code==206)
+            if(code==200||206==code)
             {
                 httpListener.onSuccess(response.getEntity());
             }else
             {
+                ListView list;
                 httpListener.onFail();
             }
 
@@ -134,5 +139,4 @@ public class FileDownHttpService implements IHttpService{
             return null;
         }
     }
-
 }

@@ -2,11 +2,8 @@ package com.dhj.scalablenetcon.http.jsonNet;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.dhj.scalablenetcon.http.constants.Constants;
 import com.dhj.scalablenetcon.http.interfaces.IDataListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 
@@ -22,10 +19,6 @@ import java.util.Map;
  * Created by duanhuangjun on 17/2/27.
  */
 
-/**
- * 策略模式
- * 支持json请求的策略,处理json请求的,请求数据处理类
- * */
 public class JsonDealLitener<M> implements IHttpListener {
     private Class<M> responese;
     /**
@@ -59,14 +52,14 @@ public class JsonDealLitener<M> implements IHttpListener {
             });
 
         } catch (IOException e) {
-            dataListener.onFail();
+            dataListener.onErro();
         }
 
     }
 
     @Override
     public void onFail() {
-        dataListener.onFail();
+        dataListener.onErro();
     }
 
     @Override
@@ -92,7 +85,7 @@ public class JsonDealLitener<M> implements IHttpListener {
                 }
 
             } catch (IOException e) {
-                dataListener.onFail();
+                dataListener.onErro();
                 System.out.println("Error=" + e.toString());
 
             } finally {
@@ -112,7 +105,7 @@ public class JsonDealLitener<M> implements IHttpListener {
 
         } catch (Exception e) {
             e.printStackTrace();
-            dataListener.onFail();
+            dataListener.onErro();
         }
         return content;
     }
