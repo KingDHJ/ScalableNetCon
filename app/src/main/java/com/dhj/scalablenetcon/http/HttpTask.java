@@ -7,6 +7,7 @@ package com.dhj.scalablenetcon.http;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.dhj.scalablenetcon.http.interfaces.IHttpListener;
 import com.dhj.scalablenetcon.http.interfaces.IHttpService;
 
 import java.io.UnsupportedEncodingException;
@@ -21,11 +22,18 @@ public class HttpTask<T> implements Runnable {
         httpService=requestHodler.getHttpService();
         httpService.setHttpListener(requestHodler.getHttpListener());
         httpService.setUrl(requestHodler.getUrl());
-        T request=requestHodler.getRequestInfo();
-        String requestInfo= JSON.toJSONString(request);
+        //增加方法
+        IHttpListener httpListener=requestHodler.getHttpListener();
+        httpListener.addHttpHeader(httpService.getHttpHeadMap());
 
         try {
-            httpService.setRequestData(requestInfo.getBytes("UTF-8"));
+            T request=requestHodler.getRequestInfo();
+            if(request!=null)
+            {
+                String requestInfo= JSON.toJSONString(request);
+                httpService.setRequestData(requestInfo.getBytes("UTF-8"));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
