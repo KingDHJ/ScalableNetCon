@@ -399,7 +399,8 @@ public class DownFileManager implements IDownloadServiceCallable {
 
     @Override
     public void onDownloadStatusChanged(DownloadItemInfo downloadItemInfo) {
-
+        //更新数据库记录
+        downLoadDao.updateRecord(downloadItemInfo);
     }
 
     @Override
@@ -411,7 +412,7 @@ public class DownFileManager implements IDownloadServiceCallable {
     public void onCurrentSizeChanged(DownloadItemInfo downloadItemInfo, double downLenth, long speed) {
         Log.i(TAG,"下载速度："+ speed/1000 +"k/s");
         Log.i(TAG,"-----路径  "+ downloadItemInfo.getFilePath()+"  下载长度  "+downLenth+"   速度  "+speed);
-        //插入数据库
+        //更新数据库记录
         downLoadDao.updateRecord(downloadItemInfo);
     }
 
