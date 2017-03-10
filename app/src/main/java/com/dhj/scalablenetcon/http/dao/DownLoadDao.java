@@ -36,6 +36,7 @@ public class DownLoadDao extends BaseDao<DownloadItemInfo> {
     public List<DownloadItemInfo> query(String sql) {
         return null;
     }
+
     /**
      * id
      */

@@ -128,6 +128,8 @@ public class DownFileManager implements IDownloadServiceCallable {
          * 括号写错了  放在外面
          *
          * 是否正在下载`
+         *
+         * 这里有问题,不应该让所有的downloadCallable都去回调错误信息
          */
         if(isDowning(file.getAbsolutePath()))
         {
@@ -409,14 +411,14 @@ public class DownFileManager implements IDownloadServiceCallable {
     public void onCurrentSizeChanged(DownloadItemInfo downloadItemInfo, double downLenth, long speed) {
         Log.i(TAG,"下载速度："+ speed/1000 +"k/s");
         Log.i(TAG,"-----路径  "+ downloadItemInfo.getFilePath()+"  下载长度  "+downLenth+"   速度  "+speed);
+        //插入数据库
+        downLoadDao.updateRecord(downloadItemInfo);
     }
 
     @Override
     public void onDownloadSuccess(DownloadItemInfo downloadItemInfo) {
         Log.i(TAG,"下载成功    路劲  "+ downloadItemInfo.getFilePath()+"  url "+ downloadItemInfo.getUrl());
-
-
-
+        //下载成功后,自己根据业务去处理
     }
 
     @Override

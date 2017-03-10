@@ -31,8 +31,8 @@ public class BaseDaoFactory {
         sqliteDatabasePath= file.getAbsolutePath()+"/user.db";
         openDatabase();
     }
-    public  synchronized  <T extends  BaseDao<M>,M> T
-    getDataHelper(Class<T> clazz,Class<M> entityClass)
+
+    public  synchronized  <T extends  BaseDao<M>,M> T getDataHelper(Class<T> clazz,Class<M> entityClass)
     {
         BaseDao baseDao=null;
         if(map.get(clazz.getSimpleName())!=null)
@@ -52,8 +52,7 @@ public class BaseDaoFactory {
         return (T) baseDao;
     }
 
-    public  synchronized  <T extends  BaseDao<M>,M> T
-    getUserHelper(Class<T> clazz,Class<M> entityClass)
+    public  synchronized  <T extends  BaseDao<M>,M> T getUserHelper(Class<T> clazz,Class<M> entityClass)
     {
         userDatabase=SQLiteDatabase.openOrCreateDatabase(PrivateDataBaseEnums.database.getValue(),null);
         BaseDao baseDao=null;
@@ -68,6 +67,7 @@ public class BaseDaoFactory {
         }
         return (T) baseDao;
     }
+
     private void openDatabase() {
         this.sqLiteDatabase=SQLiteDatabase.openOrCreateDatabase(sqliteDatabasePath,null);
     }
